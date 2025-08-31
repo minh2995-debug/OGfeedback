@@ -393,8 +393,8 @@ export default function EmployeeFeedbackApp() {
           </div>
           <div className="grid place-items-center">
             <div className="rounded-3xl bg-amber-100 p-6 text-center">
-              <div className="text-6xl">⭐️⭐️⭐️⭐️⭐️</div>
-              <div className="mt-2 text-sm text-amber-900">Trung bình 4.8/5 từ 1.2k+ đánh giá</div>
+              <div className="text-3xl">⭐️⭐️⭐️⭐️⭐️</div>
+              <div className="mt-2 text-sm text-amber-900">Trung bình 4.8/5 từ 160+ đánh giá</div>
             </div>
           </div>
         </div>
