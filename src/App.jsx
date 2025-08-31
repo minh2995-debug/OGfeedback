@@ -321,10 +321,10 @@ export default function EmployeeFeedbackApp() {
 
     // 2) Optional: send to your backend / Google Apps Script (uncomment & set URL)
     try {
-       await fetch("https://script.google.com/macros/s/AKfycbxuu3RVGg2KB-FszIJAieFwHRdPIUhzus8v1n7qQeVtXblaZna80rDQ-npzU8YsUFjk/exec", {
-         method: "POST",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify(payload),
+       const response = await fetch("https://script.google.com/macros/s/AKfycbwMhX4lupfzMiDZYw45Vvv1xeZMdg1rt4YbFoxauFn2C1aSu_wRs8MrnFkFJDh4ta8d/exec", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload),
        });
      } catch (err) {
        console.warn("Không gửi được lên server, vẫn lưu localStorage.", err);
