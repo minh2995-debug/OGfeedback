@@ -30,14 +30,14 @@ const DEFAULT_STAFF = [
   },
   {
     id: "e3",
-    name: "Khánh Linh",
+    name: "Hồng Nhung",
     role: "Thu ngân",
     avatar:
       "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=512&auto=format&fit=crop",
   },
   {
     id: "e4",
-    name: "Tuấn Kiệt",
+    name: "Minh Nguyễn",
     role: "Phục vụ",
     avatar:
       "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=512&auto=format&fit=crop",
