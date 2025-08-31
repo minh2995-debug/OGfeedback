@@ -320,50 +320,15 @@ export default function EmployeeFeedbackApp() {
     saveFeedback(next);
 
     // 2) Optional: send to your backend / Google Apps Script (uncomment & set URL)
-    export default function App() {
-  const [employeeId, setEmployeeId] = useState("");
-  const [rating, setRating] = useState("");
-  const [comment, setComment] = useState("");
-  const [orderCode, setOrderCode] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    const payload = {
-      employeeId,
-      rating,
-      comment,
-      orderCode,
-      source: window.location.href,
-      device: navigator.userAgent,
-      timestamp: new Date().toISOString(),
-    };
-
     try {
-      await fetch("YOUR_SCRIPT_URL/exec", {
-        method: "POST",
-        mode: "no-cors", // ⚡ Bỏ lỗi CORS, dữ liệu vẫn ghi vào Google Sheet
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      alert("✅ Gửi đánh giá thành công!");
-      // Reset form
-      setEmployeeId("");
-      setRating("");
-      setComment("");
-      setOrderCode("");
-    } catch (err) {
-      console.error("Error:", err);
-      alert("❌ Có lỗi khi gửi đánh giá");
-    } finally {
-      setLoading(false);
-    }
-  };
+       await fetch("https://script.google.com/macros/s/AKfycbx0PbDd65EFy8RgnGS9v_atHf6aKfjc1l9nPTZ2B-hpmjautvowvMKlDrzcPXHgknbi/exec", {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify(payload),
+       });
+     } catch (err) {
+       console.warn("Không gửi được lên server, vẫn lưu localStorage.", err);
+     }
 
     setSelected(null);
     setToast("Cảm ơn bạn đã đánh giá!");
