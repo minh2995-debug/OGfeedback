@@ -320,40 +320,50 @@ export default function EmployeeFeedbackApp() {
     saveFeedback(next);
 
     // 2) Optional: send to your backend / Google Apps Script (uncomment & set URL)
-    const handleSubmit = async (e) => {
-  e.preventDefault();
+    export default function App() {
+  const [employeeId, setEmployeeId] = useState("");
+  const [rating, setRating] = useState("");
+  const [comment, setComment] = useState("");
+  const [orderCode, setOrderCode] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const payload = {
-    employeeId,
-    rating,
-    comment,
-    orderCode,
-    source: window.location.href,
-    device: navigator.userAgent,
-    timestamp: new Date().toISOString(),
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const payload = {
+      employeeId,
+      rating,
+      comment,
+      orderCode,
+      source: window.location.href,
+      device: navigator.userAgent,
+      timestamp: new Date().toISOString(),
+    };
+
+    try {
+      await fetch("YOUR_SCRIPT_URL/exec", {
+        method: "POST",
+        mode: "no-cors", // ⚡ Bỏ lỗi CORS, dữ liệu vẫn ghi vào Google Sheet
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      alert("✅ Gửi đánh giá thành công!");
+      // Reset form
+      setEmployeeId("");
+      setRating("");
+      setComment("");
+      setOrderCode("");
+    } catch (err) {
+      console.error("Error:", err);
+      alert("❌ Có lỗi khi gửi đánh giá");
+    } finally {
+      setLoading(false);
+    }
   };
-
-  try {
-    const res = await fetch("YOUR_SCRIPT_URL/exec", {
-      method: "POST",
-      mode: "no-cors",   // 👈 thêm dòng này
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-
-    // ⚠️ Khi dùng no-cors, không đọc được res.json()
-    // nên chỉ cần báo thành công cho user thôi
-    alert("✅ Gửi đánh giá thành công!");
-    setEmployeeId("");
-    setRating("");
-    setComment("");
-    setOrderCode("");
-  } catch (err) {
-    console.error("Error:", err);
-    alert("❌ Có lỗi khi gửi đánh giá");
-  }
 
     setSelected(null);
     setToast("Cảm ơn bạn đã đánh giá!");
