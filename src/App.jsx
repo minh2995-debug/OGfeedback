@@ -320,15 +320,40 @@ export default function EmployeeFeedbackApp() {
     saveFeedback(next);
 
     // 2) Optional: send to your backend / Google Apps Script (uncomment & set URL)
-    try {
-       await fetch("https://script.google.com/macros/s/AKfycbx0PbDd65EFy8RgnGS9v_atHf6aKfjc1l9nPTZ2B-hpmjautvowvMKlDrzcPXHgknbi/exec", {
-         method: "POST",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify(payload),
-       });
-     } catch (err) {
-       console.warn("Không gửi được lên server, vẫn lưu localStorage.", err);
-     }
+    const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const payload = {
+    employeeId,
+    rating,
+    comment,
+    orderCode,
+    source: window.location.href,
+    device: navigator.userAgent,
+    timestamp: new Date().toISOString(),
+  };
+
+  try {
+    const res = await fetch("YOUR_SCRIPT_URL/exec", {
+      method: "POST",
+      mode: "no-cors",   // 👈 thêm dòng này
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    // ⚠️ Khi dùng no-cors, không đọc được res.json()
+    // nên chỉ cần báo thành công cho user thôi
+    alert("✅ Gửi đánh giá thành công!");
+    setEmployeeId("");
+    setRating("");
+    setComment("");
+    setOrderCode("");
+  } catch (err) {
+    console.error("Error:", err);
+    alert("❌ Có lỗi khi gửi đánh giá");
+  }
 
     setSelected(null);
     setToast("Cảm ơn bạn đã đánh giá!");
