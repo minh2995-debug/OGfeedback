@@ -16,15 +16,15 @@ import { Star, X, CheckCircle2, Coffee, Upload, Download, MessageSquare, Search 
 const DEFAULT_STAFF = [
   {
     id: "e1",
-    name: "Minh Anh",
+    name: "Hiếu Hiếu",
     role: "Phục vụ",
     avatar:
       "https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=512&auto=format&fit=crop",
   },
   {
     id: "e2",
-    name: "Hải Đăng",
-    role: "Barista",
+    name: "Hòa Hòa",
+    role: "Phục vụ",
     avatar:
       "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=512&auto=format&fit=crop",
   },
