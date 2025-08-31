@@ -320,7 +320,7 @@ export default function EmployeeFeedbackApp() {
     saveFeedback(next);
 
     // 2) Optional: send to your backend / Google Apps Script (uncomment & set URL)
-    try {
+    /* try {
        await fetch("https://script.google.com/macros/s/AKfycbxuu3RVGg2KB-FszIJAieFwHRdPIUhzus8v1n7qQeVtXblaZna80rDQ-npzU8YsUFjk/exec", {
          method: "POST",
          headers: { "Content-Type": "application/json" },
@@ -329,6 +329,29 @@ export default function EmployeeFeedbackApp() {
      } catch (err) {
        console.warn("Không gửi được lên server, vẫn lưu localStorage.", err);
      }
+	*/
+	const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx0PbDd65EFy8RgnGS9v_atHf6aKfjc1l9nPTZ2B-hpmjautvowvMKlDrzcPXHgknbi/exec";
+
+const handleSubmit = async () => {
+  const payload = {
+    employeeId: selected.id,
+    rating,
+    comment,
+    orderCode: "",
+    source: window.location.href,
+    device: navigator.userAgent
+  };
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    setSubmitted(true);
+  } catch (err) {
+    alert("Gửi thất bại: " + err.message);
+  }
+};
 
     setSelected(null);
     setToast("Cảm ơn bạn đã đánh giá!");
