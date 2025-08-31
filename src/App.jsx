@@ -310,12 +310,13 @@ function AdminView({ data, staff }) {
               onChange={(e) => setQ(e.target.value)}
             />
           </div>
-          <button
+          {isAdmin && ( <button
             onClick={exportCSV}
             className="inline-flex items-center gap-2 rounded-xl bg-black px-4 py-2 text-white shadow active:translate-y-[1px]"
           >
             <Download className="h-4 w-4" /> Xuất CSV
           </button>
+		  )}
         </div>
       </div>
 
