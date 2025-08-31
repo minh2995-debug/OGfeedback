@@ -42,6 +42,20 @@ const DEFAULT_STAFF = [
     avatar:
       "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=512&auto=format&fit=crop",
   },
+  {
+    id: "e4",
+    name: "Ly Ly",
+    role: "Phục vụ",
+    avatar:
+      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=512&auto=format&fit=crop",
+  },
+  {
+    id: "e4",
+    name: "Như Như",
+    role: "Phục vụ",
+    avatar:
+      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=512&auto=format&fit=crop",
+  },
 ];
 
 // ---------- Local storage helpers ----------
