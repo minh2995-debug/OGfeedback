@@ -423,34 +423,41 @@ export default function EmployeeFeedbackApp() {
   };
 
   const submit = async () => {
-    if (!selected || rating === 0) return;
+  if (!selected || rating === 0) return;
 
-    const payload = {
-      timestamp: new Date().toISOString(),
-      employeeId: selected.id,
-      rating,
-      comment: comment.trim(),
-      orderCode: orderCode.trim(),
-      source: getSource(),
-      device: getDeviceInfo(),
-    };
-
-    // 1) Lưu localStorage ngay để cảm giác nhanh + offline
-    const next = [payload, ...data];
-    setData(next);
-    saveFeedback(next);
-
-    // 2) Gửi lên Google Apps Script (không chặn UI)
-    try {
-      await postToSheet(payload);
-    } catch (err) {
-      // Không chặn UI; chỉ log cảnh báo
-      console.warn("Không gửi được lên server, vẫn lưu localStorage.", err);
-    }
-
-    // 3) Reset UI
-    handleAfterSubmitUI();
+  const payload = {
+    timestamp: new Date().toISOString(),
+    employeeId: selected.id,
+    rating,
+    comment: comment.trim(),
+    orderCode: orderCode.trim(),
+    source: "web",
+    device: navigator.userAgent,
   };
+
+  // gửi dữ liệu lên Apps Script Web App
+  try {
+    await fetch(
+      "https://script.google.com/macros/s/AKfycbx0PbDd65EFy8RgnGS9v_atHf6aKfjc1l9nPTZ2B-hpmjautvowvMKlDrzcPXHgknbi/exec",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }
+    );
+  } catch (err) {
+    console.warn("Không gửi được lên server, vẫn lưu localStorage.", err);
+  }
+
+  // reset form sau khi submit
+  setSelected(null);
+  setRating(0);
+  setComment("");
+  setOrderCode("");
+
+  setToast("Cảm ơn bạn đã đánh giá!");
+  setTimeout(() => setToast(""), 2500);
+};
 
   const addStaffByUpload = (file) => {
     const reader = new FileReader();
