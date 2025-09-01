@@ -13,7 +13,7 @@ import {
 
 // =================== CONFIG GOOGLE APPS SCRIPT ===================
 const FETCH_URL =
-  "https://script.google.com/macros/s/AKfycbz4UCeGYyZtGuUff5kcf3W4W0iEHBIsLaM-jJnNEKEkeEPbkR3g5DoFjs9i1RDRfiSV/exec";
+  "https://script.google.com/macros/s/AKfycbzX53PHojcvFDVMIL7YEajCADOTNPcVtqWqkznYqL-BDlVVtxqXALbwAa_EafUNeKI/exec";
 const NO_CORS = false;
 
 // =================== EXAMPLE STAFF DATA ===================
