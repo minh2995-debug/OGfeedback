@@ -398,7 +398,7 @@ export default function EmployeeFeedbackApp() {
 
     const payload = {
       timestamp: new Date().toISOString(),
-      employeeId: selected.id,
+      employeeId: selected.name,
       rating,
       comment: comment.trim(),
       orderCode: orderCode.trim(),
