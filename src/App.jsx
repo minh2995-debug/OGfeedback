@@ -13,7 +13,7 @@ import {
 
 // =================== CONFIG GOOGLE APPS SCRIPT ===================
 const FETCH_URL =
-  "https://script.google.com/macros/s/AKfycbx0PbDd65EFy8RgnGS9v_atHf6aKfjc1l9nPTZ2B-hpmjautvowvMKlDrzcPXHgknbi/exec";
+  "https://script.google.com/macros/s/AKfycbz4UCeGYyZtGuUff5kcf3W4W0iEHBIsLaM-jJnNEKEkeEPbkR3g5DoFjs9i1RDRfiSV/exec";
 const NO_CORS = false;
 
 // =================== EXAMPLE STAFF DATA ===================
@@ -114,7 +114,7 @@ async function postToSheet(payload) {
   try {
     data = await res.json();
   } catch {
-    // If GAS returns text, treat as OK
+    // Nếu GAS trả text, coi như ok
   }
   return { ok: true, data };
 }
@@ -406,15 +406,15 @@ export default function EmployeeFeedbackApp() {
       device: getDeviceInfo(),
     };
 
-    // Save to localStorage
+    // Lưu vào localStorage
     const newData = [...data, payload];
     setData(newData);
     saveFeedback(newData);
 
-    // Send to Google Apps Script
+    // Gửi lên Google Apps Script
     try {
       const result = await postToSheet(payload);
-      console.log("Feedback sent to Google Sheet:", result);
+      console.log("Đã gửi đánh giá lên Google Sheet:", result);
       handleAfterSubmitUI();
     } catch (err) {
       console.warn("Không gửi được lên Google Sheet, đã lưu localStorage:", err);
