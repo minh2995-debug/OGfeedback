@@ -437,26 +437,23 @@ export default function EmployeeFeedbackApp() {
 
   // gửi dữ liệu lên Apps Script Web App
   try {
-    await fetch(
-      "https://script.google.com/macros/s/AKfycbx0PbDd65EFy8RgnGS9v_atHf6aKfjc1l9nPTZ2B-hpmjautvowvMKlDrzcPXHgknbi/exec",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      }
-    );
+    await fetch("WEB_APP_URL", {
+  method: "POST",
+  mode: "no-cors", // 👈 thêm dòng này để tránh lỗi CORS
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload),
+});
   } catch (err) {
     console.warn("Không gửi được lên server, vẫn lưu localStorage.", err);
   }
 
   // reset form sau khi submit
   setSelected(null);
-  setRating(0);
-  setComment("");
-  setOrderCode("");
-
-  setToast("Cảm ơn bạn đã đánh giá!");
-  setTimeout(() => setToast(""), 2500);
+	setRating(0);
+	setComment("");
+	setOrderCode("");
+	setToast("Cảm ơn bạn đã đánh giá!");
+	setTimeout(() => setToast(""), 2500);
 };
 
   const addStaffByUpload = (file) => {
