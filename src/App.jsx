@@ -14,7 +14,7 @@ import {
 // =================== CONFIG GOOGLE APPS SCRIPT ===================
 const FETCH_URL =
   "https://script.google.com/macros/s/AKfycby_9_mXaXLoEiETPgfXYK80o5Y6ysS1IMzEEMIO-aetx_3AE27yDrhqannagHYGD7vQ/exec";
-const NO_CORS = false;
+const NO_CORS = true;
 
 // =================== EXAMPLE STAFF DATA ===================
 const DEFAULT_STAFF = [
