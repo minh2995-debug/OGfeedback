@@ -479,7 +479,7 @@ const [loading, setLoading] = useState(false);
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
-            <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 hover:bg-zinc-50">
+            /* <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 hover:bg-zinc-50">
               <Upload className="h-4 w-4" />
               <span className="text-sm">Nhập danh sách (CSV)</span>
               <input
@@ -490,7 +490,7 @@ const [loading, setLoading] = useState(false);
                   e.target.files?.[0] && addStaffByUpload(e.target.files[0])
                 }
               />
-            </label>
+            </label> */
           </div>
         </div>
       </header>
