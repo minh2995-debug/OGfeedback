@@ -11,31 +11,12 @@ import {
   Search,
 } from "lucide-react";
 
-/* =====================================================================
-  EMPLOYEE FEEDBACK APP – Single-file React + Tailwind + Framer Motion
-  - Chọn nhân viên → chấm sao → (tuỳ chọn) nhận xét + mã đơn → Gửi
-  - Lưu localStorage mặc định để hoạt động offline / không có server
-  - Có bảng Admin (#admin) để xem và export CSV
-  - Tích hợp Google Apps Script: chỉ cần dán URL web app vào FETCH_URL
-     (đã set sẵn). Nếu bạn vẫn dính CORS do cấu hình GAS, có thể bật
-     NO_CORS = true để luôn gửi no-cors (không đọc response).
-  ----------------------------------------------------------------------
-  Cấu trúc:
-    - Hằng số / default data
-    - Helpers: localStorage, thiết bị, CSV
-    - Components: Stars, Modal, Toast, AdminView
-    - Main: EmployeeFeedbackApp
-  ===================================================================== */
-
 // =================== CONFIG GOOGLE APPS SCRIPT ===================
 const FETCH_URL =
   "https://script.google.com/macros/s/AKfycbx0PbDd65EFy8RgnGS9v_atHf6aKfjc1l9nPTZ2B-hpmjautvowvMKlDrzcPXHgknbi/exec";
-// Nếu (1) bạn đã cấu hình GAS đúng CORS (trả Access-Control-Allow-Origin:*),
-// để NO_CORS = false (mặc định). Nếu (2) bạn chưa cấu hình hoặc còn lỗi,
-// đặt NO_CORS = true để trình duyệt vẫn gửi request (không đọc response).
 const NO_CORS = false;
 
-// =================== EXAMPLE STAFF DATA (SỬA THEO BẠN) ===================
+// =================== EXAMPLE STAFF DATA ===================
 const DEFAULT_STAFF = [
   {
     id: "e1",
@@ -66,14 +47,14 @@ const DEFAULT_STAFF = [
       "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=512&auto=format&fit=crop",
   },
   {
-    id: "e5", // 🔧 sửa id trùng (trước là e4)
+    id: "e5",
     name: "Ly Ly",
     role: "Phục vụ",
     avatar:
       "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=512&auto=format&fit=crop",
   },
   {
-    id: "e6", // 🔧 sửa id trùng (trước là e4)
+    id: "e6",
     name: "Như Như",
     role: "Phục vụ",
     avatar:
@@ -119,14 +100,12 @@ async function postToSheet(payload) {
     body: JSON.stringify(payload),
   };
 
-  // Với no-cors, không đọc được response nhưng request vẫn đi
   if (NO_CORS) {
     await fetch(FETCH_URL, { ...opts, mode: "no-cors" });
     return { ok: true, noCors: true };
   }
 
   const res = await fetch(FETCH_URL, opts);
-  // Nếu GAS trả 200 + JSON thì ok; còn không cũng không fail app
   if (!res.ok) {
     const text = await res.text().catch(() => "");
     throw new Error(`Fetch failed: ${res.status} ${text}`);
@@ -135,20 +114,17 @@ async function postToSheet(payload) {
   try {
     data = await res.json();
   } catch {
-    // Nếu GAS trả text, coi như ok
+    // If GAS returns text, treat as OK
   }
   return { ok: true, data };
 }
 
-// =================== CSV PARSER (NHẸ NHÀNG) ===================
+// =================== CSV PARSER ===================
 function parseCSV(text) {
-  // Format kỳ vọng: name,role,avatar
-  // Dòng rỗng bỏ qua
   const lines = String(text)
     .split(/\r?\n/)
     .filter((l) => l.trim().length > 0);
   const rows = lines.map((line) => {
-    // đơn giản: split theo dấu phẩy
     const parts = line.split(",").map((s) => (s ?? "").trim());
     const [name, role, avatar] = [
       parts[0] ?? "",
@@ -310,13 +286,12 @@ function AdminView({ data, staff }) {
               onChange={(e) => setQ(e.target.value)}
             />
           </div>
-          {isAdmin && ( <button
+          <button
             onClick={exportCSV}
             className="inline-flex items-center gap-2 rounded-xl bg-black px-4 py-2 text-white shadow active:translate-y-[1px]"
           >
             <Download className="h-4 w-4" /> Xuất CSV
           </button>
-		  )}
         </div>
       </div>
 
@@ -358,7 +333,6 @@ function AdminView({ data, staff }) {
         </table>
       </div>
 
-      {/* Gợi ý nhanh */}
       <div className="mx-auto mt-6 max-w-5xl rounded-2xl border bg-white p-4 text-sm text-zinc-600">
         <div className="font-medium mb-2">Gợi ý:</div>
         <ul className="list-disc list-inside space-y-1">
@@ -379,19 +353,17 @@ function AdminView({ data, staff }) {
 // =================== MAIN APP ===================
 export default function EmployeeFeedbackApp() {
   const [staff, setStaff] = useState(DEFAULT_STAFF);
-  const [selected, setSelected] = useState(null); // {id,name,role,avatar} hoặc null
-  const [rating, setRating] = useState(0); // 1..5
+  const [selected, setSelected] = useState(null);
+  const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [orderCode, setOrderCode] = useState("");
   const [toast, setToast] = useState("");
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
 
-  // Admin view toggle theo hash
   const isAdmin =
     typeof window !== "undefined" && window.location.hash === "#admin";
 
-  // Load dữ liệu từ localStorage
   useEffect(() => {
     setData(loadFeedback());
   }, []);
@@ -413,7 +385,6 @@ export default function EmployeeFeedbackApp() {
   };
 
   const handleAfterSubmitUI = () => {
-    // Đóng modal + thông báo + reset fields
     setSelected(null);
     setRating(0);
     setComment("");
@@ -423,38 +394,35 @@ export default function EmployeeFeedbackApp() {
   };
 
   const submit = async () => {
-  if (!selected || rating === 0) return;
+    if (!selected || rating === 0) return;
 
-  const payload = {
-    timestamp: new Date().toISOString(),
-    employeeId: selected.id,
-    rating,
-    comment: comment.trim(),
-    orderCode: orderCode.trim(),
-    source: "web",
-    device: navigator.userAgent,
+    const payload = {
+      timestamp: new Date().toISOString(),
+      employeeId: selected.id,
+      rating,
+      comment: comment.trim(),
+      orderCode: orderCode.trim(),
+      source: getSource(),
+      device: getDeviceInfo(),
+    };
+
+    // Save to localStorage
+    const newData = [...data, payload];
+    setData(newData);
+    saveFeedback(newData);
+
+    // Send to Google Apps Script
+    try {
+      const result = await postToSheet(payload);
+      console.log("Feedback sent to Google Sheet:", result);
+      handleAfterSubmitUI();
+    } catch (err) {
+      console.warn("Không gửi được lên Google Sheet, đã lưu localStorage:", err);
+      setToast("Đã lưu đánh giá, nhưng không gửi được lên server.");
+      setTimeout(() => setToast(""), 3500);
+      handleAfterSubmitUI();
+    }
   };
-
-  // gửi dữ liệu lên Apps Script Web App
-  try {
-    await fetch("WEB_APP_URL", {
-  method: "POST",
-  mode: "no-cors", // 👈 thêm dòng này để tránh lỗi CORS
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(payload),
-});
-  } catch (err) {
-    console.warn("Không gửi được lên server, vẫn lưu localStorage.", err);
-  }
-
-  // reset form sau khi submit
-  setSelected(null);
-	setRating(0);
-	setComment("");
-	setOrderCode("");
-	setToast("Cảm ơn bạn đã đánh giá!");
-	setTimeout(() => setToast(""), 2500);
-};
 
   const addStaffByUpload = (file) => {
     const reader = new FileReader();
@@ -479,7 +447,6 @@ export default function EmployeeFeedbackApp() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
-      {/* =================== HEADER =================== */}
       <header className="sticky top-0 z-10 border-b bg-white/80 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 p-4">
           <div className="flex items-center gap-3">
@@ -519,7 +486,6 @@ export default function EmployeeFeedbackApp() {
         </div>
       </header>
 
-      {/* =================== HERO =================== */}
       <section className="mx-auto max-w-5xl px-4 pb-6 pt-8">
         <div className="grid gap-6 rounded-3xl bg-white p-6 shadow-sm md:grid-cols-[1.2fr_1fr]">
           <div className="space-y-3">
@@ -548,7 +514,6 @@ export default function EmployeeFeedbackApp() {
         </div>
       </section>
 
-      {/* =================== STAFF GRID =================== */}
       <section className="mx-auto max-w-5xl px-4 pb-20">
         <div className="mb-4 flex items-center gap-2 sm:hidden">
           <div className="flex w-full items-center gap-2 rounded-xl border px-3 py-2">
@@ -600,7 +565,6 @@ export default function EmployeeFeedbackApp() {
         )}
       </section>
 
-      {/* =================== MODAL: RATE EMPLOYEE =================== */}
       <Modal
         open={!!selected}
         onClose={() => setSelected(null)}
@@ -686,7 +650,6 @@ export default function EmployeeFeedbackApp() {
 
       <Toast show={!!toast} message={toast} />
 
-      {/* =================== FOOTER =================== */}
       <footer className="border-t bg-white/70">
         <div className="mx-auto max-w-5xl p-4 text-center text-sm text-zinc-500">
           © {new Date().getFullYear()} Ông Gấu Coffee – Cảm ơn bạn đã dành thời
@@ -696,14 +659,3 @@ export default function EmployeeFeedbackApp() {
     </div>
   );
 }
-
-/* =====================================================================
-  GHI CHÚ TÍCH HỢP NHANH
-  1) Dán component này vào dự án React + Tailwind của bạn (App.jsx).
-  2) Triển khai lên Vercel/Netlify, v.v.
-  3) Xem bảng quản trị: mở trang với #admin (vd: https://domain.com/#admin).
-  4) Lưu Google Sheet: tạo Google Apps Script Web App nhận POST JSON (doPost),
-     triển khai "Anyone" và copy URL dán vào FETCH_URL ở đầu file.
-     - Nếu vẫn lỗi CORS, tạm thời đặt NO_CORS = true. Request vẫn ghi vào sheet
-       (nhưng không đọc được response).
-  ===================================================================== */
