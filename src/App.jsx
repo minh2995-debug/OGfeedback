@@ -392,37 +392,46 @@ export default function EmployeeFeedbackApp() {
     setToast("Cảm ơn bạn đã đánh giá!");
     setTimeout(() => setToast(""), 2500);
   };
+const [loading, setLoading] = useState(false);
 
   const submit = async () => {
-    if (!selected || rating === 0) return;
+  if (!selected || rating === 0 || loading) return;
 
-    const payload = {
-      timestamp: new Date().toISOString(),
-      employeeId: selected.name,
-      rating,
-      comment: comment.trim(),
-      orderCode: orderCode.trim(),
-      source: getSource(),
-      device: getDeviceInfo(),
-    };
+  setLoading(true); // 👉 bật trạng thái loading
 
-    // Lưu vào localStorage
-    const newData = [...data, payload];
-    setData(newData);
-    saveFeedback(newData);
-
-    // Gửi lên Google Apps Script
-    try {
-      const result = await postToSheet(payload);
-      console.log("Đã gửi đánh giá lên Google Sheet:", result);
-      handleAfterSubmitUI();
-    } catch (err) {
-      console.warn("Không gửi được lên Google Sheet, đã lưu localStorage:", err);
-      setToast("Đã lưu đánh giá, nhưng không gửi được lên server.");
-      setTimeout(() => setToast(""), 3500);
-      handleAfterSubmitUI();
-    }
+  const payload = {
+    timestamp: new Date().toISOString(),
+    employeeName: selected.name,   // 👈 gửi tên nhân viên
+    rating,
+    comment: comment.trim(),
+    orderCode: orderCode.trim(),
+    source: getSource(),
+    device: getDeviceInfo(),
   };
+
+  const newData = [...data, payload];
+  setData(newData);
+  saveFeedback(newData);
+
+  try {
+    const result = await postToSheet(payload);
+    console.log("Đã gửi đánh giá lên Google Sheet:", result);
+
+    setToast("Gửi thành công lên Google Sheet!");
+    setTimeout(() => setToast(""), 2500);
+
+    handleAfterSubmitUI();
+  } catch (err) {
+    console.warn("Không gửi được lên Google Sheet:", err);
+
+    setToast("Đã lưu local nhưng KHÔNG gửi được lên Google Sheet.");
+    setTimeout(() => setToast(""), 3500);
+
+    handleAfterSubmitUI();
+  } finally {
+    setLoading(false); // 👉 tắt loading
+  }
+};
 
   const addStaffByUpload = (file) => {
     const reader = new FileReader();
@@ -637,12 +646,17 @@ export default function EmployeeFeedbackApp() {
                 Hủy
               </button>
               <button
-                onClick={submit}
-                disabled={rating === 0}
-                className="inline-flex items-center gap-2 rounded-xl bg-amber-600 px-5 py-2 font-medium text-white shadow-sm transition active:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                Gửi đánh giá
-              </button>
+  onClick={submit}
+  disabled={loading}
+  className={`px-4 py-2 rounded-lg text-white transition ${
+    loading
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bg-blue-600 hover:bg-blue-700"
+  }`}
+>
+  {loading ? "Đang gửi..." : "Gửi đánh giá"}
+</button>
+
             </div>
           </div>
         )}
