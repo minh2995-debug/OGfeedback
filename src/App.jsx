@@ -93,31 +93,44 @@ const getSource = () => {
 };
 
 // =================== NETWORK HELPER ===================
-async function postToSheet(payload) {
-  const opts = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const payload = {
+    employeeId,
+    rating,
+    comment,
+    orderCode,
+    source: window.location.href,
+    device: navigator.userAgent,
   };
 
-  if (NO_CORS) {
-    await fetch(FETCH_URL, { ...opts, mode: "no-cors" });
-    return { ok: true, noCors: true };
-  }
-
-  const res = await fetch(FETCH_URL, opts);
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(`Fetch failed: ${res.status} ${text}`);
-  }
-  let data = null;
   try {
-    data = await res.json();
-  } catch {
-    // Nếu GAS trả text, coi như ok
+    const res = await postToSheet(payload);
+
+    if (NO_CORS) {
+      // Trường hợp gửi bằng no-cors (không đọc được phản hồi)
+      alert("📩 Đánh giá đã được gửi, vui lòng kiểm tra Google Sheet.");
+    } else {
+      // Trường hợp có phản hồi từ Apps Script
+      if (res.ok && res.data?.status === "success") {
+        alert("✅ Gửi thành công! Cảm ơn bạn đã đánh giá.");
+      } else {
+        alert("⚠️ Không chắc dữ liệu đã ghi. Kiểm tra Google Sheet.");
+      }
+    }
+
+    // Reset form sau khi gửi
+    setEmployeeId("");
+    setRating(0);
+    setComment("");
+    setOrderCode("");
+
+  } catch (err) {
+    console.error("Error submitting feedback:", err);
+    alert("❌ Lỗi khi gửi dữ liệu. Vui lòng thử lại.");
   }
-  return { ok: true, data };
-}
+};
 
 // =================== CSV PARSER ===================
 function parseCSV(text) {
